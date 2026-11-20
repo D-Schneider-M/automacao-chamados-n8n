@@ -1,0 +1,10 @@
+[
+  {"id": "T001", "rota_esperada": "automatico", "chamado": "O entregador atrasou 40 minutos e o cliente cancelou o pedido de R$ 62. Marcamos como pronto dentro do tempo informado. Uso o plano Entrega Parceira. Vou receber pelo pedido?"},
+  {"id": "T002", "rota_esperada": "aprovacao_humana", "chamado": "Um cliente alegou que encontrou um corpo estranho na comida e pediu reembolso integral de R$ 85. O que acontece agora?"},
+  {"id": "T003", "rota_esperada": "automatico", "chamado": "O cliente disse que faltou uma bebida de R$ 9 no pedido e mandou foto no mesmo dia. Preciso reembolsar?"},
+  {"id": "T004", "rota_esperada": "aprovacao_humana", "chamado": "Um cliente pediu reembolso integral de R$ 380 dizendo que o pedido veio errado, mas não enviou foto. Já é a terceira reclamação dele no mês."},
+  {"id": "T005", "rota_esperada": "automatico", "chamado": "Em que dia da semana recebo o repasse dos pedidos concluídos? Posso antecipar?"},
+  {"id": "T006", "rota_esperada": "aprovacao_humana", "chamado": "Posso alterar o horário de funcionamento do meu restaurante nos feriados pelo aplicativo?"},
+  {"id": "T007", "rota_esperada": "aprovacao_humana", "chamado": "Fui descontado em R$ 45 no repasse por um item errado há 3 dias e tenho fotos que mostram que o item estava correto. Posso contestar?"},
+  {"id": "T008", "rota_esperada": "aprovacao_humana", "chamado": "Cancelei um pedido de R$ 70 porque acabou o ingrediente principal. Qual é a multa e o que acontece se eu cancelar mais pedidos neste mês? Estou com medo de ser suspenso."}
+]

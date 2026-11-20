@@ -1,0 +1,382 @@
+{
+  "name": "Triagem de chamados",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chamado",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "28242bd8-0e6f-4e31-a624-73aad2fabfb6",
+      "name": "Webhook",
+      "webhookId": "2894345b-592a-48d9-9dc6-bb0c52e9c704"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/triar",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chamado: $json.body.chamado, id_chamado: $json.body.id_chamado }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "27a5480f-ec7d-498b-ae78-1866be2546c7",
+      "name": "HTTP Request",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "8aba532c-5b77-488a-bc58-a87a65ce62e5",
+              "leftValue": "={{ $json.rota }}",
+              "rightValue": "automatico",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "fbe4e049-a137-4ccd-938a-96777f6ec474",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "035aa2b6-49cc-4fff-aa5a-2e97e64d7c94",
+              "name": "status_registro",
+              "value": "resolvido_e_registrado",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        672,
+        -96
+      ],
+      "id": "dcf78a78-4f98-4843-9b75-f92785f44e54",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: \"resolvido_automaticamente\", resposta: $('HTTP Request').item.json.resposta_ao_parceiro }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        896,
+        -96
+      ],
+      "id": "b1fc7710-2a5e-40df-9753-5c9af3f0b6ba",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"aguardando_aprovacao\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        672,
+        96
+      ],
+      "id": "661a00dd-e078-491e-a5cd-493e98ee13e2",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "9017872653",
+        "message": "=🚨 *Novo Chamado para Aprovação Humana*\n\n*Categoria:* {{ $('HTTP Request').item.json.categoria }}\n*Nível de Risco:* {{ $('HTTP Request').item.json.nivel_risco }}\n*Motivo:* {{ $('HTTP Request').item.json.motivo_escalonamento }}\n\n*Sugestão de Resposta da IA:*\n\"{{ $('HTTP Request').item.json.resposta_ao_parceiro }}\"",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "chatApproval": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        896,
+        96
+      ],
+      "id": "94471eba-370d-4884-ad96-633d050790de",
+      "name": "Send message and wait for response",
+      "webhookId": "4e075c07-0886-4365-9d9a-4587679f1a29",
+      "credentials": {
+        "telegramApi": {
+          "id": "3XbI1LtPe6j2d25H",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "5af79bf2-3bf9-4655-9d94-fedbea194ecf",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        1120,
+        96
+      ],
+      "id": "267550e2-0c7b-4457-8335-363a2f1ac2f3",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "95a53063-7609-4646-8fd6-290b80187474",
+              "name": "status_aprovacao",
+              "value": "aprovado_e_enviado_ao_parceiro",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1344,
+        0
+      ],
+      "id": "4bbc6980-acd7-4acf-9e0d-f718b4016966",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "chatId": "9017872653",
+        "text": "=✅ *Resposta aprovada e disparada com sucesso ao parceiro!*\n\n*Mensagem enviada:*\n\"{{ $('HTTP Request').item.json.resposta_ao_parceiro }}\"",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        0
+      ],
+      "id": "58365ad0-2ad3-4ee3-82d2-949f8c4eb4da",
+      "name": "Send a text message",
+      "webhookId": "0e57b2da-15d4-4e20-bb0c-1ebcc4c9f112",
+      "credentials": {
+        "telegramApi": {
+          "id": "3XbI1LtPe6j2d25H",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "52906427-7488-4ee2-b5ff-accc988b89a5",
+              "name": "status_aprovacao",
+              "value": "reprovado_escalado_manual",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1344,
+        192
+      ],
+      "id": "2df7454a-3a90-4874-9fd4-7d8fc3610f74",
+      "name": "Edit Fields2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9bea5d53-8237-4d9f-bed1-3175bf71643e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f62346fdb69c9f592d7660ee9823446c4371739f93b466ca65531a46f20eb1a6"
+  },
+  "nodeGroups": [],
+  "id": "nmMaFJ23R9H8J6yn",
+  "tags": []
+}
