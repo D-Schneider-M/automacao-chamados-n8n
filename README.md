@@ -3,6 +3,7 @@
 Fluxo automatizado que recebe chamados de restaurantes parceiros por **webhook**, classifica com **Gemini (RAG + JSON estruturado)** e decide a rota: casos simples são resolvidos automaticamente e casos de risco passam por **aprovação humana no Telegram**.
 
 > A política de parceiros ("Sabor Express") e os chamados de exemplo são **fictícios**, criados apenas para demonstração.
+![Demonstração do Fluxo Ponta a Ponta](assets/demo.gif)
 
 ## Arquitetura
 
